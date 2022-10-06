@@ -10,7 +10,7 @@ import {
     TextFieldProps,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
-import { useTranslate } from 'ra-core';
+import { useDebounce, useTranslate } from 'ra-core';
 
 /**
  * An override of the default MUI TextField which is resettable
@@ -20,7 +20,7 @@ export const ResettableTextField = forwardRef(
         const {
             clearAlwaysVisible,
             InputProps,
-            value,
+            debounce,
             resettable,
             disabled,
             variant,
@@ -31,7 +31,14 @@ export const ResettableTextField = forwardRef(
 
         const translate = useTranslate();
 
-        const { onChange, onFocus, onBlur } = props;
+        const { onFocus, onBlur } = props;
+
+        const { value, onChange } = useDebounce(
+            props.value,
+            props.onChange,
+            debounce
+        );
+
         const handleClickClearButton = useCallback(
             event => {
                 event.preventDefault();
@@ -155,7 +162,6 @@ export const ResettableTextField = forwardRef(
 
         return (
             <StyledTextField
-                value={value}
                 InputProps={{
                     classes:
                         props.select && variant === 'filled'
@@ -170,6 +176,8 @@ export const ResettableTextField = forwardRef(
                 className={className}
                 size="small"
                 {...rest}
+                value={value}
+                onChange={onChange}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 inputRef={ref}
@@ -198,6 +206,7 @@ ResettableTextField.propTypes = {
 interface Props {
     clearAlwaysVisible?: boolean;
     resettable?: boolean;
+    debounce?: number;
 }
 
 export type ResettableTextFieldProps = Props &

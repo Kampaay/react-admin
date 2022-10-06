@@ -31,9 +31,15 @@ const VisitorEdit = () => {
                             <Box display={{ xs: 'block', sm: 'flex' }}>
                                 <Box flex={1} mr={{ xs: 0, sm: '0.5em' }}>
                                     <TextInput
+                                        debounce={500}
                                         source="first_name"
                                         isRequired
                                         fullWidth
+                                        validate={v =>
+                                            v.length < 10
+                                                ? 'Too short'
+                                                : undefined
+                                        }
                                     />
                                 </Box>
                                 <Box flex={1} ml={{ xs: 0, sm: '0.5em' }}>
